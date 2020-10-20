@@ -18,15 +18,17 @@ module.exports = class Parser {
 
   parse(buffer) { // file is contents
     this.gotString = false;
-    const decodedBuffer = textDecoder.decode(buffer);
-    const endOfHeaders = Parser.findDoubleCrLf(decodedBuffer);
+    const uintBuffer = new Uint8Array(buffer);
+
+    // const decodedBuffer = textDecoder.decode(buffer);
+    const endOfHeaders = Parser.findDoubleCrLf(uintBuffer);
     const header = decodedBuffer.slice(0, endOfHeaders);
-    const separatorMatch = /boundary="(.*)"/g.exec(header);
+    const separatorMatch = /boundary="(.*)"/g.exec(textDecoder.decode(header));
     if (!separatorMatch) {
       throw new Error('No separator');
     }
     const separator = `--${separatorMatch[1]}`;
-    this.parts = Parser.splitByBoundary(textDecoder.decode(buffer), separator, endOfHeaders + 1, this.maxFileSize)
+    this.parts = Parser.splitByBoundary(uintBuffer, separator, endOfHeaders + 1, this.maxFileSize)
       .map(Parser.parsePart);
     return this;
   }
