@@ -11,7 +11,7 @@ describe('the mhtml parser', () => {
     const p = new Parser();
     const results = p.parse(mhtml).rewrite().spit();
     expect(results.length).to.equal(1);
-    expect(results[0].filename).to.equal('http!testim.io');
+    expect(results[0].filename).to.equal('http://testim.io/');
     expect(results[0].content.trim()).to.equal('<html><body>Hello World!</body></html>');
   });
 
@@ -34,8 +34,8 @@ describe('the mhtml parser', () => {
     const p = new Parser();
     const results = p.parse(mhtml).rewrite().spit();
     expect(results.length).to.equal(2);
-    expect(results[0].filename).to.equal('http!example.com!main.html');
-    expect(results[0].content.trim()).to.equal('<html><body><img src="http!example.com!1.jpg"></body></html>');
+    expect(results[0].filename).to.equal('http://example.com/main.html');
+    expect(results[0].content.trim()).to.equal('<html><body><img src="http://example.com/1.jpg"></body></html>');
   });
 
 
@@ -69,8 +69,8 @@ describe('the mhtml parser', () => {
     const p = new Parser();
     const results = p.parse(mhtml).rewrite().spit();
     expect(results.length).to.equal(2);
-    expect(results[0].filename).to.equal('http!example.com!main.html');
-    expect(results[0].content.trim()).to.equal('<html><body><img src="http!example.com!1.jpg"><img src="http!example.com!1.jpg"></body></html>');
+    expect(results[0].filename).to.equal('http://example.com/main.html');
+    expect(results[0].content.trim()).to.equal('<html><body><img src="http://example.com/1.jpg"><img src="http://example.com/1.jpg"></body></html>');
   });
 
   it('parses iframes files', () => {
@@ -85,8 +85,8 @@ describe('the mhtml parser', () => {
     const p = new Parser();
     const results = p.parse(mhtml).rewrite().spit();
     expect(results.length).to.equal(2);
-    expect(results[0].filename).to.equal('http!example.com!main.html');
-    expect(results[0].content.trim()).to.equal("<html><body><iframe src='http!example.com!frame.html'></iframe></body></html>");
+    expect(results[0].filename).to.equal('http://example.com/main.html');
+    expect(results[0].content.trim()).to.equal("<html><body><iframe src='http://example.com/frame.html'></iframe></body></html>");
   });
 
   it('parses nested iframes files', () => {
@@ -106,9 +106,9 @@ describe('the mhtml parser', () => {
     const p = new Parser();
     const results = p.parse(mhtml).rewrite().spit();
     expect(results.length).to.equal(3);
-    expect(results[0].filename).to.equal('http!example.com!main.html');
-    expect(results[0].content.trim()).to.equal('<html><body><iframe src="http!example.com!one.html"></iframe></body></html>');
-    expect(results[1].content.trim()).to.equal('<html><body><iframe src="http!example.com!two.html"></iframe></body></html>');
+    expect(results[0].filename).to.equal('http://example.com/main.html');
+    expect(results[0].content.trim()).to.equal('<html><body><iframe src="http://example.com/one.html"></iframe></body></html>');
+    expect(results[1].content.trim()).to.equal('<html><body><iframe src="http://example.com/two.html"></iframe></body></html>');
     expect(results[2].content.trim()).to.equal('<html><body>Hello World!</body></html>');
   });
 
@@ -129,9 +129,9 @@ describe('the mhtml parser', () => {
     const p = new Parser();
     const results = p.parse(mhtml).rewrite().spit();
     expect(results.length).to.equal(3);
-    expect(results[0].filename).to.equal('http!example.com!main.html');
-    expect(results[0].content.trim()).to.equal('<html><body><iframe src="http!example.com!one.html"></iframe></body></html>');
-    expect(results[1].content.trim()).to.equal('<html><body><img src="http!example.com!1.jpg"></body></html>');
+    expect(results[0].filename).to.equal('http://example.com/main.html');
+    expect(results[0].content.trim()).to.equal('<html><body><iframe src="http://example.com/one.html"></iframe></body></html>');
+    expect(results[1].content.trim()).to.equal('<html><body><img src="http://example.com/1.jpg"></body></html>');
   });
 
   it('parses base tags', () => {
@@ -147,7 +147,7 @@ describe('the mhtml parser', () => {
     const p = new Parser();
     const results = p.parse(mhtml).rewrite().spit();
     expect(results.length).to.equal(2);
-    expect(results[0].content.trim()).to.equal('<html><body><base href=""><img src="http!example.com!foo!1.jpg"></body></html>');
+    expect(results[0].content.trim()).to.equal('<html><body><base href=""><img src="http://example.com/foo/1.jpg"></body></html>');
   });
 
   it('parses css files', () => {
@@ -185,7 +185,7 @@ describe('the mhtml parser', () => {
     const p = new Parser();
     const results = p.parse(mhtml).rewrite().spit();
     expect(results.length).to.equal(2);
-    expect(results[0].content.trim()).to.equal("body{background-image:url('http!example.com!1.jpg');}");
+    expect(results[0].content.trim()).to.equal("body{background-image:url('http://example.com/1.jpg');}");
   });
 
   it('replaces absoluite CSS links', () => {
@@ -201,7 +201,7 @@ describe('the mhtml parser', () => {
     const p = new Parser();
     const results = p.parse(mhtml).rewrite().spit();
     expect(results.length).to.equal(2);
-    expect(results[0].content.trim()).to.equal("body{background-image:url('http!example.com!1.jpg');}");
+    expect(results[0].content.trim()).to.equal("body{background-image:url('http://example.com/1.jpg');}");
   });
 
   it('replaces multiple absoluite CSS links', () => {
@@ -217,7 +217,7 @@ describe('the mhtml parser', () => {
     const p = new Parser();
     const results = p.parse(mhtml).rewrite().spit();
     expect(results.length).to.equal(2);
-    expect(results[0].content.trim()).to.equal("body{background-image:url('http!example.com!1.jpg');background:url('http!example.com!1.jpg');}");
+    expect(results[0].content.trim()).to.equal("body{background-image:url('http://example.com/1.jpg');background:url('http://example.com/1.jpg');}");
   });
 
   it('extracts mime types', () => {

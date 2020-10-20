@@ -1,13 +1,16 @@
-const filenamify = require('filenamify');
 const bodyDecoder = require('./decoder');
 const linkReplacer = require('./link-replacer');
 
 const CR = '\r'.charCodeAt(0);
 const LF = '\n'.charCodeAt(0);
+
+function identity(value) {
+  return value;
+}
 module.exports = class Parser {
   constructor(config = {}) {
     this.maxFileSize = config.maxFileSize || 50 * 1000 * 1000;
-    this.rewriteFn = config.rewriteFn || filenamify;
+    this.rewriteFn = config.rewriteFn || identity;
     this.gotString = false;
   }
 
@@ -98,7 +101,7 @@ module.exports = class Parser {
     const headerPart = part.slice(0, headerEnd).toString().trim();
     let startBody = headerEnd + 1;
     while ((part[startBody] === CR || part[startBody] === LF)
-     && (startBody < headerEnd + 10)) { // remove some initial whitespace
+      && (startBody < headerEnd + 10)) { // remove some initial whitespace
       startBody++;
     }
     const body = part.slice(startBody);
