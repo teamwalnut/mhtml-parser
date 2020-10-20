@@ -17,7 +17,8 @@ module.exports = class Parser {
   parse(buffer) { // file is contents
     this.gotString = false;
     const endOfHeaders = Parser.findDoubleCrLf(buffer);
-    const header = buffer.slice(0, endOfHeaders).toString();
+    const enc = new TextDecoder("utf-8");
+    const header = enc.decode(buffer.slice(0, endOfHeaders));
     const separatorMatch = /boundary="(.*)"/g.exec(header);
     if (!separatorMatch) {
       throw new Error('No separator');
