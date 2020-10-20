@@ -7,6 +7,8 @@ const LF = '\n'.charCodeAt(0);
 function identity(value) {
   return value;
 }
+const textDecoder = new TextDecoder("utf-8");
+
 module.exports = class Parser {
   constructor(config = {}) {
     this.maxFileSize = config.maxFileSize || 50 * 1000 * 1000;
@@ -17,14 +19,13 @@ module.exports = class Parser {
   parse(buffer) { // file is contents
     this.gotString = false;
     const endOfHeaders = Parser.findDoubleCrLf(buffer);
-    const enc = new TextDecoder("utf-8");
-    const header = enc.decode(buffer.slice(0, endOfHeaders));
+    const header = textDecoder.decode(buffer.slice(0, endOfHeaders));
     const separatorMatch = /boundary="(.*)"/g.exec(header);
     if (!separatorMatch) {
       throw new Error('No separator');
     }
     const separator = `--${separatorMatch[1]}`;
-    this.parts = Parser.splitByBoundary(buffer, separator, endOfHeaders + 1, this.maxFileSize)
+    this.parts = Parser.splitByBoundary(textDecoder.decode(buffer), separator, endOfHeaders + 1, this.maxFileSize)
       .map(Parser.parsePart);
     return this;
   }
