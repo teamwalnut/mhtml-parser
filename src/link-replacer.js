@@ -17,7 +17,7 @@ module.exports = {
   html(domBuffer, resourcesMap, baseUrl) {
     const gotString = typeof domBuffer === 'string';
     if (gotString) {
-      domBuffer = Buffer.from(domBuffer);
+      domBuffer = Uint8Array.from(domBuffer);
     }
     if (generator) {
       generator.reset(domBuffer, resourcesMap, baseUrl);

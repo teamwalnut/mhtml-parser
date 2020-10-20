@@ -68,7 +68,7 @@ const c = {
 class Generator {
   constructor(data, mapping, baseUrl) {
     this.reset(data, mapping, baseUrl);
-    this.replaced = Buffer.alloc(data.length + MAX_EXTRA_SPACE); // output prealloc, can be reused between runs
+    this.replaced = new Uint8Array(data.length + MAX_EXTRA_SPACE); // output prealloc, can be reused between runs
   }
 
   reset(data, mapping, baseUrl) {
@@ -81,7 +81,7 @@ class Generator {
   }
 
   result() {
-    return Buffer.from(this.replaced.slice(0, this.j));
+    return this.replaced.slice(0, this.j);
   }
 
   parse() {
@@ -173,9 +173,9 @@ class Generator {
   parseStyleTag() {
     // special style tag handling, can't nest, treat whole content as CSS
     let initial = this.i;
-    const isEnd = () => 
+    const isEnd = () =>
       this.current() === c.ANGLE_OPEN &&
-      this.data[this.i + 1] === c.SLASH && 
+      this.data[this.i + 1] === c.SLASH &&
       isStyle(
         this.data[this.i + 2],
         this.data[this.i + 3],
@@ -183,12 +183,12 @@ class Generator {
         this.data[this.i + 5],
         this.data[this.i + 6]
       );
-    while(!isEnd()) {
+    while (!isEnd()) {
       this.i++;
     }
     let styleContents = this.data.slice(initial, this.i);
     let value = this.cssProcessor && this.cssProcessor(styleContents, this.mapping, this.baseUrl);
-    let buffered = Buffer.from(value); // might be string
+    let buffered = Uint8Array.from(value); // might be string
     buffered.copy(this.replaced, this.j);
     this.j += buffered.length;
     this.addAndProgress(); // <
@@ -322,14 +322,14 @@ class Generator {
       return attrs.OTHER;
     }
     if (len === 5) {
-      if (isStyle(data[initial], data[initial + 1],data[initial + 2], data[initial + 3], data[initial + 4])) {
+      if (isStyle(data[initial], data[initial + 1], data[initial + 2], data[initial + 3], data[initial + 4])) {
         return attrs.STYLE;
       }
       return attrs.OTHER;
     }
     if (len === 6) {
       if (isSrcSet(
-        data[initial], data[initial + 1],data[initial + 2], data[initial + 3], data[initial + 4], data[initial + 5]
+        data[initial], data[initial + 1], data[initial + 2], data[initial + 3], data[initial + 4], data[initial + 5]
       )) {
         return attrs.SRCSET;
       }
@@ -337,7 +337,7 @@ class Generator {
     }
     if (len === 10) {
       if (isXlinkHref(
-        data[initial], 
+        data[initial],
         data[initial + 1],
         data[initial + 2],
         data[initial + 3],
@@ -373,7 +373,7 @@ class Generator {
     this.i++;
     this.j++;
   }
-  
+
   /* istanbul ignore next */
   dumpIf(fn = () => true, logger = false) {
     let next100 = this.data.slice(this.i, this.i + 100).toString();
@@ -381,7 +381,7 @@ class Generator {
       console.log(new Error().stack);
       console.log(logger ? logger(next100) : next100);
     }
-  } 
+  }
 
   lenOk() {
     return this.i < this.len;

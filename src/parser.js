@@ -14,20 +14,16 @@ module.exports = class Parser {
     this.gotString = false;
   }
 
-  parse(file) { // file is contents
+  parse(buffer) { // file is contents
     this.gotString = false;
-    if (!Buffer.isBuffer(file)) {
-      file = Buffer.from(file);
-      this.gotString = true;
-    }
-    const endOfHeaders = Parser.findDoubleCrLf(file);
-    const header = file.slice(0, endOfHeaders).toString();
+    const endOfHeaders = Parser.findDoubleCrLf(buffer);
+    const header = buffer.slice(0, endOfHeaders).toString();
     const separatorMatch = /boundary="(.*)"/g.exec(header);
     if (!separatorMatch) {
       throw new Error('No separator');
     }
     const separator = `--${separatorMatch[1]}`;
-    this.parts = Parser.splitByBoundary(file, separator, endOfHeaders + 1, this.maxFileSize)
+    this.parts = Parser.splitByBoundary(buffer, separator, endOfHeaders + 1, this.maxFileSize)
       .map(Parser.parsePart);
     return this;
   }

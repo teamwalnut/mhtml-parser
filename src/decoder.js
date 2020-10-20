@@ -1,16 +1,7 @@
-const decodeBase64 = (() => {
-  try {
-    // eslint-disable-next-line
-    return require('64').decode;
-  } catch (e) {
-    return data => Buffer.from(data.toString(), 'base64');
-  }
-})();
-
 module.exports = (encoding, body) => {
   switch (encoding) {
     case 'base64':
-      return decodeBase64(body);
+      return btoa(body)
     case 'quoted-printable':
       return convertQuotedPrintable(body);
     case '8bit':
@@ -38,9 +29,11 @@ const translate = (() => {
   return Function('c', str);
 })();
 
+
 function convertQuotedPrintable(body) {
   const len = body.length;
-  const decoded = Buffer.alloc(len); // at most this big
+  const decoded = new Uint8Array(len); // at most this big
+
   let j = 0;
   const runTo = len - 3;
   for (let i = 0; i < runTo; i++) {
