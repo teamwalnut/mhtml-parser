@@ -13,25 +13,27 @@ const attrs = {
   OTHER: 10,
 };
 
-function generateIs(str) {
-  str = str.split('').map(x => x.replace(':', 'COLON'));
-  const mapBack = (s) => {
-    if (s === 'COLON') return ':';
-    return s;
-  };
-  const body = str
-    .map(s => `(${s} === ${mapBack(s).toLowerCase().charCodeAt(0)} || ${s} === ${mapBack(s).toUpperCase().charCodeAt(0)})`)
-    .join(' && ');
-  /* eslint-disable */
-  return Function(...str, `return ${body}`);
+function isSrc(s, r, c) {
+  return (s === 115 || s === 83) && (r === 114 || r === 82) && (c === 99 || c === 67)
 }
-const isSrc = generateIs('src');
-const isSrcSet = generateIs('srcset');
-const isXlinkHref = generateIs('xlink:href');
-const isHref = generateIs('href');
-const isData = generateIs('data');
-const isCode = generateIs('code');
-const isStyle = generateIs('style');
+function isSrcSet(s, r, c, s, e, t) {
+  return (s === 115 || s === 83) && (r === 114 || r === 82) && (c === 99 || c === 67) && (s === 115 || s === 83) && (e === 101 || e === 69) && (t === 116 || t === 84)
+}
+const isXlinkHref = function (x, l, i, n, k, COLON, h, r, e, f) {
+  return (x === 120 || x === 88) && (l === 108 || l === 76) && (i === 105 || i === 73) && (n === 110 || n === 78) && (k === 107 || k === 75) && (COLON === 58 || COLON === 58) && (h === 104 || h === 72) && (r === 114 || r === 82) && (e === 101 || e === 69) && (f === 102 || f === 70)
+}
+function isHref(h, r, e, f) {
+  return (h === 104 || h === 72) && (r === 114 || r === 82) && (e === 101 || e === 69) && (f === 102 || f === 70)
+};
+function isData(d, a, t, a) {
+  return (d === 100 || d === 68) && (a === 97 || a === 65) && (t === 116 || t === 84) && (a === 97 || a === 65)
+};
+function isCode(c, o, d, e) {
+  return (c === 99 || c === 67) && (o === 111 || o === 79) && (d === 100 || d === 68) && (e === 101 || e === 69)
+};
+function isStyle(s, t, y, l, e) {
+  return (s === 115 || s === 83) && (t === 116 || t === 84) && (y === 121 || y === 89) && (l === 108 || l === 76) && (e === 101 || e === 69)
+}
 
 const c = {
   ANGLE_OPEN: '<'.charCodeAt(0),
