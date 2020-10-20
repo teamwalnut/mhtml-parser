@@ -19,15 +19,27 @@ const LF = '\n'.charCodeAt(0);
 const D = 'D'.charCodeAt(0);
 const THREE = '3'.charCodeAt(0);
 
-const translate = (() => {
-  let str = 'switch (c) {\n';
-  for (let i = 0; i <= 9; i++) str += `\tcase ${'0'.charCodeAt(0) + i}: return ${i};\n`;
-  for (let i = 0xA; i <= 0xF; i++) str += `\tcase ${'A'.charCodeAt(0) + i - 0xA}: return ${i};\n`;
-  str += 'default: return -1;\n';
-  str += '};\n';
-  /* eslint-disable no-new-func */
-  return Function('c', str);
-})();
+function translate(c) {
+  switch (c) {
+    case 48: return 0;
+    case 49: return 1;
+    case 50: return 2;
+    case 51: return 3;
+    case 52: return 4;
+    case 53: return 5;
+    case 54: return 6;
+    case 55: return 7;
+    case 56: return 8;
+    case 57: return 9;
+    case 65: return 10;
+    case 66: return 11;
+    case 67: return 12;
+    case 68: return 13;
+    case 69: return 14;
+    case 70: return 15;
+    default: return -1;
+  };
+}
 
 
 function convertQuotedPrintable(body) {
